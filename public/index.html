@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bulk Email Composer</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <h1><i class="material-icons">mail</i> Bulk Email Composer</h1>
+        <div class="email-stats" id="emailStats">
+          <span class="stats-item">Loading stats...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Email Compose Card -->
+      <div class="compose-card">
+        <div class="compose-header">
+          <h2><i class="material-icons">edit</i> Compose Email</h2>
+          <div class="compose-actions">
+            <button type="button" id="previewBtn" class="btn-secondary">
+              <i class="material-icons">visibility</i> Preview
+            </button>
+          </div>
+        </div>
+        
+        <form id="uploadForm" class="compose-form">
+          <!-- Recipients Section -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="material-icons">group</i>
+              <span>Recipients</span>
+            </div>
+            <div class="file-upload-area">
+              <input type="file" id="file" name="file" accept=".xlsx,.xls" required hidden />
+              <label for="file" class="file-upload-label">
+                <i class="material-icons">upload_file</i>
+                <span id="fileLabel">Choose XLSX file with email addresses</span>
+              </label>
+              <div class="file-help">
+                <small>Upload an Excel file with an "email" column containing recipient addresses</small>
+                <a href="/sample-template.xlsx" download class="download-template">
+                  <i class="material-icons">download</i> Download Sample Template
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email Content -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="material-icons">mail_outline</i>
+              <span>Email Content</span>
+            </div>
+            
+            <div class="form-group">
+              <input type="text" id="subject" name="subject" class="subject-input" placeholder="Email subject" required />
+            </div>
+            
+            <div class="form-group">
+              <div class="editor-toolbar">
+                <button type="button" data-command="bold" class="toolbar-btn">
+                  <i class="material-icons">format_bold</i>
+                </button>
+                <button type="button" data-command="italic" class="toolbar-btn">
+                  <i class="material-icons">format_italic</i>
+                </button>
+                <button type="button" data-command="underline" class="toolbar-btn">
+                  <i class="material-icons">format_underlined</i>
+                </button>
+                <div class="toolbar-divider"></div>
+                <button type="button" data-command="insertUnorderedList" class="toolbar-btn">
+                  <i class="material-icons">format_list_bulleted</i>
+                </button>
+                <button type="button" data-command="insertOrderedList" class="toolbar-btn">
+                  <i class="material-icons">format_list_numbered</i>
+                </button>
+              </div>
+              <div id="bodyEditor" class="body-editor" contenteditable="true" placeholder="Write your email message here..."></div>
+              <textarea id="body" name="body" style="display: none;" required></textarea>
+            </div>
+            
+            <div class="form-group">
+              <textarea id="footer" name="footer" class="footer-input" placeholder="Optional footer text (appears at bottom of email)" rows="2"></textarea>
+            </div>
+          </div>
+
+          <!-- Send Section -->
+          <div class="form-section">
+            <div class="send-controls">
+              <button type="submit" class="btn-primary send-btn">
+                <i class="material-icons">send</i>
+                Send Bulk Emails
+              </button>
+              <div class="send-info">
+                <small id="sendInfo">Ready to send</small>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Progress & Results -->
+      <div class="results-card" id="resultsCard" style="display: none;">
+        <div class="results-header">
+          <h3><i class="material-icons">assignment</i> Email Results</h3>
+        </div>
+        <div class="progress-section">
+          <div id="progress" class="progress-text"></div>
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+        </div>
+        <div id="result" class="result-section" style="display:none;">
+          <div class="result-actions">
+            <a id="downloadLink" href="#" download="bulk-email-results.xlsx" class="btn-success">
+              <i class="material-icons">download</i>
+              Download Results (Excel)
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Email Preview Modal -->
+    <div id="previewModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="material-icons">visibility</i> Email Preview</h3>
+          <button type="button" class="close-btn" id="closePreview">
+            <i class="material-icons">close</i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="preview-subject">
+            <strong>Subject:</strong> <span id="previewSubject"></span>
+          </div>
+          <div class="preview-body" id="previewBody"></div>
+          <div class="preview-footer" id="previewFooter"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="main.js"></script>
+</body>
+</html> 
