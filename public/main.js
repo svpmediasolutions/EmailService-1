@@ -201,9 +201,7 @@ class EmailComposer {
             <img src="${'cid:footerlogo'}" alt="Logo" style="height: 32px;">
             <div style="flex: 1;">
               ${footerContent || '<span style="color: #999;">No footer text provided</span>'}
-              <div style="margin-top: 10px; font-size: 12px; color: #999;">
-                © ${new Date().getFullYear()} Company Name. All rights reserved.
-              </div>
+          
             </div>
           </div>
         </div>
