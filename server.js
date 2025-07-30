@@ -265,30 +265,42 @@ app.post('/api/send-bulk-email', upload.single('file'), async (req, res) => {
       }
 
       if (i < maxEmailsToProcess) {
-        const formattedBody = body.trim();
-        const formattedFooter = footer ? footer.trim() : '';
+        // Remove all trailing whitespace and newlines from body and footer
+        const formattedBody = body.replace(/[\s\n]+$/g, '').replace(/^[\s\n]+/g, '');
+        const formattedFooter = footer ? footer.replace(/^[\s\n]+|[\s\n]+$/g, '') : '';
 
+        // Responsive email HTML template, no padding/margin, fluid layout
         const htmlContent = `
-        <div style="font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 640px; margin: 0 auto; line-height: 1.6; color: #333;">
-          <div style="text-align: center; padding: 30px 0 20px;">
-            <img src="cid:footerlogo" alt="Company Logo" style="height: 40px;">
-          </div>
-          <div style="padding: 0 20px 20px; font-size: 15px; line-height: 1.7; color: #444; white-space: pre-line;">
-            ${formattedBody}
-          </div>
-          <div style="border-top: 1px solid #f0f0f0; margin: 0 20px;"></div>
-          <div style="padding: 25px 20px 10px; display: flex; align-items: flex-start;">
-            <div style="margin-right: 15px;">
-              <img src="cid:footerlogo" alt="Company Logo" style="height: 40px;">
-            </div>
-            <div style="flex: 1; font-size: 13px; line-height: 1.5; color: #666;">
-              ${formattedFooter.replace(/\n/g, '<br>')}
-              <div style="margin-top: 10px; color: #999; font-size: 12px;">
-                © ${new Date().getFullYear()} Company Name. All rights reserved.
+          <div style="font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 100%; width: 100%; margin: 0 auto; color: #333;">
+            <style>
+              @media only screen and (max-width: 600px) {
+                .email-container { width: 100% !important; }
+                .email-header img, .email-footer img { height: 32px !important; }
+                .email-body, .email-footer-content { font-size: 14px !important; }
+              }
+            </style>
+            <div class="email-container" style="width: 100%; box-sizing: border-box;">
+              <div class="email-header" style="text-align: center;">
+                <img src="cid:footerlogo" alt="Company Logo" style="height: 40px; max-width: 100%;">
+              </div>
+              <div class="email-body" style="font-size: 15px; line-height: 1.7; color: #444; white-space: pre-line;">
+                ${formattedBody}
+              </div>
+              <div style="border-top: 1px solid #f0f0f0;"></div>
+              <div class="email-footer" style="display: flex; align-items: flex-start;">
+                <div style="margin-right: 15px;">
+                  <img src="cid:footerlogo" alt="Company Logo" style="height: 40px; max-width: 100%;">
+                </div>
+                <div class="email-footer-content" style="flex: 1; font-size: 13px; line-height: 1.5; color: #666;">
+                  ${formattedFooter.replace(/\n/g, '<br>')}
+                  <div style="color: #999; font-size: 12px;">
+                    © ${new Date().getFullYear()} Company Name. All rights reserved.
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>`;
+        `;
 
         const mailOptions = {
           from: process.env.EMAIL_USER,
@@ -392,4 +404,4 @@ app.listen(PORT, () => {
   } else {
     console.log('✅ Email transporter initialized successfully');
   }
-}); 
+});
