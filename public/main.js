@@ -80,7 +80,8 @@ class EmailComposer {
   }
 
   syncEditorContent() {
-    this.bodyTextarea.value = this.bodyEditor.innerText;
+    // Only trim leading/trailing whitespace, preserve intentional spacing
+    this.bodyTextarea.value = this.bodyEditor.innerText.replace(/^\s+|\s+$/g, '');
     this.updateSendInfo();
     this.saveContent();
   }
@@ -123,8 +124,8 @@ class EmailComposer {
     const content = {
       subject: this.subjectInput.value,
       body: this.bodyEditor.innerHTML,
-      bodyText: this.bodyEditor.innerText,
-      footer: this.footerInput.value,
+      bodyText: this.bodyEditor.innerText.replace(/^\s+|\s+$/g, ''),
+      footer: this.footerInput.value.replace(/^\s+|\s+$/g, ''),
       timestamp: new Date().toISOString()
     };
     localStorage.setItem('bulkEmailDraft', JSON.stringify(content));
