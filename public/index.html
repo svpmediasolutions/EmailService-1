@@ -27,9 +27,10 @@
         <div class="compose-header">
           <h2><i class="material-icons">edit</i> Compose Email</h2>
           <div class="compose-actions">
-            <button type="button" id="previewBtn" class="btn-secondary">
+            <!-- Hide preview button since preview is always shown -->
+            <!-- <button type="button" id="previewBtn" class="btn-secondary">
               <i class="material-icons">visibility</i> Preview
-            </button>
+            </button> -->
           </div>
         </div>
         
@@ -55,42 +56,14 @@
             </div>
           </div>
 
-          <!-- Email Content -->
+          <!-- Show subject input only -->
           <div class="form-section">
             <div class="section-header">
               <i class="material-icons">mail_outline</i>
-              <span>Email Content</span>
+              <span>Email Subject</span>
             </div>
-            
             <div class="form-group">
-              <input type="text" id="subject" name="subject" class="subject-input" placeholder="Email subject" required />
-            </div>
-            
-            <div class="form-group">
-              <div class="editor-toolbar">
-                <button type="button" data-command="bold" class="toolbar-btn">
-                  <i class="material-icons">format_bold</i>
-                </button>
-                <button type="button" data-command="italic" class="toolbar-btn">
-                  <i class="material-icons">format_italic</i>
-                </button>
-                <button type="button" data-command="underline" class="toolbar-btn">
-                  <i class="material-icons">format_underlined</i>
-                </button>
-                <div class="toolbar-divider"></div>
-                <button type="button" data-command="insertUnorderedList" class="toolbar-btn">
-                  <i class="material-icons">format_list_bulleted</i>
-                </button>
-                <button type="button" data-command="insertOrderedList" class="toolbar-btn">
-                  <i class="material-icons">format_list_numbered</i>
-                </button>
-              </div>
-              <div id="bodyEditor" class="body-editor" contenteditable="true" placeholder="Write your email message here..."></div>
-              <textarea id="body" name="body" style="display: none;" required></textarea>
-            </div>
-            
-            <div class="form-group">
-              <textarea id="footer" name="footer" class="footer-input" placeholder="Optional footer text (appears at bottom of email)" rows="2"></textarea>
+              <input type="text" id="subject" name="subject" class="subject-input" placeholder="Email subject (default: SVP Media Solutions)" />
             </div>
           </div>
 
@@ -107,6 +80,11 @@
             </div>
           </div>
         </form>
+      </div>
+
+      <!-- Show email preview directly -->
+      <div class="email-preview-card">
+        <iframe src="email.html" style="width:100%;height:700px;border:none;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.07);"></iframe>
       </div>
 
       <!-- Progress & Results -->
@@ -152,4 +130,4 @@
   </div>
   <script src="main.js"></script>
 </body>
-</html> 
+</html>

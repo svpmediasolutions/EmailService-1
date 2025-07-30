@@ -4,8 +4,14 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import XLSX from 'xlsx';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -220,9 +226,18 @@ app.post('/api/send-bulk-email', upload.single('file'), async (req, res) => {
     resetDailyCountIfNeeded();
     if (!req.file) return res.status(400).json({ success: false, message: 'No file uploaded' });
 
-    const { subject, body, footer } = req.body;
-    if (!subject || !body) {
-      return res.status(400).json({ success: false, message: 'Subject and body are required.' });
+    // Load email.html as template
+    const templatePath = path.join(__dirname, 'public', 'email.html');
+    let emailHtml = '';
+    try {
+      emailHtml = fs.readFileSync(templatePath, 'utf8');
+    } catch (err) {
+      return res.status(500).json({ success: false, message: 'Email template not found.' });
+    }
+
+    const { subject } = req.body;
+    if (!subject) {
+      return res.status(400).json({ success: false, message: 'Subject is required.' });
     }
 
     const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
@@ -265,56 +280,12 @@ app.post('/api/send-bulk-email', upload.single('file'), async (req, res) => {
       }
 
       if (i < maxEmailsToProcess) {
-        // Remove all trailing whitespace and newlines from body and footer
-        const formattedBody = body.replace(/[\s\n]+$/g, '').replace(/^[\s\n]+/g, '');
-        const formattedFooter = footer ? footer.replace(/^[\s\n]+|[\s\n]+$/g, '') : '';
-
-        // Responsive email HTML template, no padding/margin, fluid layout
-        const htmlContent = `
-          <div style="font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 100%; width: 100%; margin: 0 auto; color: #333;">
-            <style>
-              @media only screen and (max-width: 600px) {
-                .email-container { width: 100% !important; }
-                .email-header img, .email-footer img { height: 32px !important; }
-                .email-body, .email-footer-content { font-size: 14px !important; }
-              }
-            </style>
-            <div class="email-container" style="width: 100%; box-sizing: border-box;">
-              <div class="email-header" style="text-align: center;">
-                <img src="cid:footerlogo" alt="Company Logo" style="height: 40px; max-width: 100%;">
-              </div>
-              <div class="email-body" style="font-size: 15px; line-height: 1.7; color: #444; white-space: pre-line;">
-                ${formattedBody}
-              </div>
-              <div style="border-top: 1px solid #f0f0f0;"></div>
-              <div class="email-footer" style="display: flex; align-items: flex-start;">
-                <div style="margin-right: 15px;">
-                  <img src="cid:footerlogo" alt="Company Logo" style="height: 40px; max-width: 100%;">
-                </div>
-                <div class="email-footer-content" style="flex: 1; font-size: 13px; line-height: 1.5; color: #666;">
-                  ${formattedFooter.replace(/\n/g, '<br>')}
-                  <div style="color: #999; font-size: 12px;">
-                    © ${new Date().getFullYear()} Company Name. All rights reserved.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-
         const mailOptions = {
           from: process.env.EMAIL_USER,
           to: toEmail,
-          subject: subject,
-          html: htmlContent,
-          text: `${formattedBody}\n\n${formattedFooter}`,
-          attachments: [
-            {
-              filename: 'logo.png',
-              path: path.join(__dirname, 'public', 'logo.png'),
-              cid: 'footerlogo'
-            }
-          ]
+          subject: 'Looking for Smart Branding, Printing & Event Solutions? We’re Here.',
+          html: emailHtml,
+          text: '', // Optionally strip HTML tags for plain text
         };
 
         try {
@@ -360,10 +331,6 @@ app.post('/api/send-bulk-email', upload.single('file'), async (req, res) => {
 });
 
 // Serve static files (frontend)
-import path from 'path';
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve sample XLSX template
