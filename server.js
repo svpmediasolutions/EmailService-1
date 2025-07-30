@@ -283,7 +283,7 @@ app.post('/api/send-bulk-email', upload.single('file'), async (req, res) => {
         const mailOptions = {
           from: process.env.EMAIL_USER,
           to: toEmail,
-          subject: 'Looking for Smart Branding, Printing & Event Solutions? We’re Here.',
+          subject: 'Looking for Smart Branding, Digital & Event Solutions? We’re Here.',
           html: emailHtml,
           text: '', // Optionally strip HTML tags for plain text
         };
